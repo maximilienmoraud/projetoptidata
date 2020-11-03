@@ -44,25 +44,36 @@ def fonctionAMaximiser(X, B):
 def simplex(X, A, B, C):
     Z = C
     minindexcolumn = 0
-    minindexrow = -1
+    minvaleurcolunm = -1
+    minindexrow = 0
+    minvaleurrow = -1
     for index, value in enumerate(Z):
-        if value < 0 and value < Z[minindexcolumn]:
+        if value < 0 and value < minvaleurcolunm:
             minindexcolumn = index
-    if Z[minindexcolumn] == 0:
+            minvaleurcolunm = value
+    if minvaleurcolunm == -1:
         print("Solution optimal", Z)
     else:
         for index, value in enumerate(A[:, minindexcolumn]):
-            if value != 0 and value < A[minindexrow, minindexcolumn]:
+            if value > 0 and B[index] > 0 and A[minindexrow, minindexcolumn] != 0 and B[index] / value < B[
+                minindexrow] / A[minindexrow, minindexcolumn]:
                 minindexrow = index
-        if A[minindexrow, minindexcolumn] == -1:
+                minvaleurrow = value
+        if minvaleurrow == -1:
             print("infinite solutions")
         else:
-            E = np.array()
-            print(E)
+            E = [[] for i in range(index + 1)]
+            #to do mettre 0 si nul
+            linepivo = (B[minindexrow] / A[minindexrow, minindexcolumn]) / A[minindexrow, :]
+            print(linepivo)
             for index, value in enumerate(A):
-                if A[index, minindexcolumn] > 0:
-                    line = value - A[index, minindexcolumn] * (A[minindexrow, :] * (1 / A[index, minindexcolumn]))
-                    E = np.concatenate((E, line), axis=0)
+                if A[index, minindexcolumn] != 0:
+                    line = value - A[index, minindexcolumn] * linepivo
+                    for e in line:
+                        E[index].append(e)
+                else:
+                    for e in value:
+                        E[index].append(e)
             print(E)
 
 
