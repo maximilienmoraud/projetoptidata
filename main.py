@@ -36,11 +36,11 @@ def fonctionAMaximiser(X,B):
         C.append(0)
     return C
         
-
-X = nbrDeVariable()
-A,B = contraintes(X)
-C = fonctionAMaximiser(X,B)
-print(X)
-print(A)
-print(B)
-print(C)
+if __name__ == '__main__':
+    X = nbrDeVariable()
+    A,B = contraintes(X)
+    C = fonctionAMaximiser(X,B)
+    print(X)
+    print(A)
+    print(B)
+    print(C)
