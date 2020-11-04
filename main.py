@@ -41,40 +41,39 @@ def fonctionAMaximiser(X, B):
     return C
 
 
-def simplex(X, A, B, C):
-    Z = C
+def simplex(X, A, B, Z):
+    print(A)
+    #print(B)
+    print(Z)
+    minvaluecolunm = Z[0]
     minindexcolumn = 0
-    minvaleurcolunm = -1
-    minindexrow = 0
-    minvaleurrow = -1
     for index, value in enumerate(Z):
-        if value < 0 and value < minvaleurcolunm:
+        if value < minvaluecolunm:
+            minvaluecolunm = value
             minindexcolumn = index
-            minvaleurcolunm = value
-    if minvaleurcolunm == -1:
+    if minvaluecolunm >= 0:
         print("Solution optimal", Z)
     else:
+        minindexrow = 0
         for index, value in enumerate(A[:, minindexcolumn]):
-            if value > 0 and B[index] > 0 and A[minindexrow, minindexcolumn] != 0 and B[index] / value < B[
-                minindexrow] / A[minindexrow, minindexcolumn]:
+            if B[minindexrow] / A[minindexrow, minindexcolumn] > B[index] / value > 0:
                 minindexrow = index
-                minvaleurrow = value
-        if minvaleurrow == -1:
+        if B[minindexrow] / A[minindexrow, minindexcolumn] <= 0:
             print("infinite solutions")
         else:
-            E = [[] for i in range(index + 1)]
-            #to do mettre 0 si nul
-            linepivo = (B[minindexrow] / A[minindexrow, minindexcolumn]) / A[minindexrow, :]
-            print(linepivo)
+            AA = np.zeros(A.shape)
+            BB = np.zeros(B.shape)
+            linepivot = A[minindexrow, :] / A[minindexrow, minindexcolumn]
+            valuepivot = B[minindexrow] / A[minindexrow, minindexcolumn]
             for index, value in enumerate(A):
-                if A[index, minindexcolumn] != 0:
-                    line = value - A[index, minindexcolumn] * linepivo
-                    for e in line:
-                        E[index].append(e)
-                else:
-                    for e in value:
-                        E[index].append(e)
-            print(E)
+                if index != minindexrow:
+                    AA[index] = value - A[index, minindexcolumn] * linepivot
+                    BB[index] = B[index] - A[index, minindexcolumn] * valuepivot
+                elif index == minindexrow:
+                    AA[index] = linepivot
+                    BB[index] = valuepivot
+            ZZ = Z + A[minindexrow, :]
+            simplex(X, AA, BB, ZZ)
 
 
 if __name__ == '__main__':
@@ -86,7 +85,7 @@ if __name__ == '__main__':
     # print(B)
     # print(C)
     X = np.array(['x', 'y', 'u', 'v', 'w'])
-    A = np.array([[1, 1, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]])
-    B = np.array([400, 300, 200])
-    C = np.array([6, 3, 0, 0, 0])
+    A = np.array([[2, 1, 1, 0, 0], [2, 3, 0, 1, 0], [3, 1, 0, 0, 1]])
+    B = np.array([18, 42, 24])
+    C = np.array([3, 2, 0, 0, 0])
     simplex(X, A, B, -C)
