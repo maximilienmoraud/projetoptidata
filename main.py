@@ -1,9 +1,5 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
 import numpy as np
+import math
 
 
 def nbrDeVariable():
@@ -41,20 +37,18 @@ def fonctionAMaximiser(X, B):
     return C
 
 
-def simplex(X, A, B, Z):
-    print(A)
-    #print(B)
-    print(Z)
+def simplex(X, A, B, Z, Base):
     minvaluecolunm = min(Z)
     minindexcolumn = np.where(Z == Z.min())[0][0]
     if minvaluecolunm >= 0:
-        print("Solution optimal", Z)
+        print("Solution optimal", B, Base)
     else:
-        minindexrow = 0
         temp = []
         for index, value in enumerate(A[:, minindexcolumn]):
-            if B[index] / value > 0:
+            if value != 0 and B[index] / value > 0:
                 temp.append(B[index] / value)
+            else:
+                temp.append(math.inf)
         minindexrow = np.where(temp == min(temp))[0][0]
         if B[minindexrow] / A[minindexrow, minindexcolumn] <= 0:
             print("infinite solutions")
@@ -70,20 +64,18 @@ def simplex(X, A, B, Z):
                 elif index == minindexrow:
                     AA[index] = linepivot
                     BB[index] = valuepivot
-            ZZ = Z - (Z[minindexcolumn]/A[minindexrow, minindexcolumn]) * A[minindexrow, :]
-            simplex(X, AA, BB, ZZ)
+            ZZ = Z - (Z[minindexcolumn] / A[minindexrow, minindexcolumn]) * A[minindexrow, :]
+            Base[minindexrow] = np.copy(X[minindexcolumn])
+            simplex(X, AA, BB, ZZ, Base)
 
 
 if __name__ == '__main__':
     # X = nbrDeVariable()
     # A,B = contraintes(X)
     # C = fonctionAMaximiser(X,B)
-    # print(X)
-    # print(A)
-    # print(B)
-    # print(C)
     X = np.array(['x', 'y', 'u', 'v', 'w'])
-    A = np.array([[2, 1, 1, 0, 0], [2, 3, 0, 1, 0], [3, 1, 0, 0, 1]])
-    B = np.array([18, 42, 24])
-    C = np.array([3, 2, 0, 0, 0])
-    simplex(X, A, B, -C)
+    A = np.array([[1, 1, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]])
+    B = np.array([400, 300, 200])
+    C = np.array([6, 3, 0, 0, 0])
+    defaultbase = np.copy(X[len(A[:, 1]) - 1:])
+    simplex(X, A, B, -C, defaultbase)
