@@ -45,19 +45,17 @@ def simplex(X, A, B, Z):
     print(A)
     #print(B)
     print(Z)
-    minvaluecolunm = Z[0]
-    minindexcolumn = 0
-    for index, value in enumerate(Z):
-        if value < minvaluecolunm:
-            minvaluecolunm = value
-            minindexcolumn = index
+    minvaluecolunm = min(Z)
+    minindexcolumn = np.where(Z == Z.min())[0][0]
     if minvaluecolunm >= 0:
         print("Solution optimal", Z)
     else:
         minindexrow = 0
+        temp = []
         for index, value in enumerate(A[:, minindexcolumn]):
-            if B[minindexrow] / A[minindexrow, minindexcolumn] > B[index] / value > 0:
-                minindexrow = index
+            if B[index] / value > 0:
+                temp.append(B[index] / value)
+        minindexrow = np.where(temp == min(temp))[0][0]
         if B[minindexrow] / A[minindexrow, minindexcolumn] <= 0:
             print("infinite solutions")
         else:
@@ -72,7 +70,7 @@ def simplex(X, A, B, Z):
                 elif index == minindexrow:
                     AA[index] = linepivot
                     BB[index] = valuepivot
-            ZZ = Z + A[minindexrow, :]
+            ZZ = Z - (Z[minindexcolumn]/A[minindexrow, minindexcolumn]) * A[minindexrow, :]
             simplex(X, AA, BB, ZZ)
 
 
