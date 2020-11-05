@@ -4,7 +4,7 @@ import math
 
 def nbrDeVariable():
     temp = input(
-        "Entrez les noms de vos variables en les séparants par une virgule:\n(N'oubliez pas les variables u et v...)\n")
+        "Entrez les noms de vos variables en les séparants par une virgule:\n(N'oubliez pas les contraites)\n")
     temp = temp.split(',')
     return temp
 
@@ -17,9 +17,9 @@ def contraintes(X):
     for i in range(nbrContrainte):
         print("\nContrainte numéro " + str(i) + ":")
         for j in range(len(X) - nbrContrainte):
-            temp = int(input("Entrez le coefficiant devant la variable " + X[j] + ": "))
+            temp = float(input("Entrez le coefficiant devant la variable " + X[j] + ": "))
             A[i].append(temp)
-        temp = int(input("Entrez le membre droit de l'inéquation\n(Exemple: Si 3x-5y<=4, entrez 4): "))
+        temp = float(input("Entrez le membre droit de l'inéquation\n(Exemple: Si 3x-5y<=4, entrez 4): "))
         B.append(temp)
     v = np.ones(nbrContrainte)
     diag = np.diag(v)
@@ -30,7 +30,7 @@ def contraintes(X):
 def fonctionAMaximiser(X, B):
     C = []
     for i in range(len(X) - len(B)):
-        temp = int(input("Entrez le coefficiant devant la variable " + X[i] + " de la fonction à maximiser: "))
+        temp = float(input("Entrez le coefficiant devant la variable " + X[i] + " de la fonction à maximiser: "))
         C.append(temp)
     while len(C) != len(X):
         C.append(0)
@@ -41,7 +41,7 @@ def simplex(X, A, B, Z, Base):
     minvaluecolunm = min(Z)
     minindexcolumn = np.where(Z == Z.min())[0][0]
     if minvaluecolunm >= 0:
-        print("Solution optimal", B, Base)
+        print("optimal solutions", B, Base)
     else:
         temp = []
         for index, value in enumerate(A[:, minindexcolumn]):
@@ -71,11 +71,15 @@ def simplex(X, A, B, Z, Base):
 
 if __name__ == '__main__':
     # X = nbrDeVariable()
-    # A,B = contraintes(X)
-    # C = fonctionAMaximiser(X,B)
-    X = np.array(['x', 'y', 'u', 'v', 'w'])
-    A = np.array([[1, 1, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]])
-    B = np.array([400, 300, 200])
-    C = np.array([6, 3, 0, 0, 0])
+    # A, B = contraintes(X)
+    # C = fonctionAMaximiser(X, B)
+    X = np.array(['g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7'])
+    A = np.array([[10, 15, 11, 12, 0, 8, 1, 0, 0, 0, 0, 0, 0], [12, 12, 12, 0, 12, 15, 0, 1, 0, 0, 0, 0, 0],
+                  [0, 12, 13, 16, 0, 4.57, 0, 0, 1, 0, 0, 0, 0], [5, 6, 0, 0, 7.5, 6, 0, 0, 0, 1, 0, 0, 0],
+                  [2, 1, 0, 1, 2, 0, 0, 0, 0, 0, 1, 0, 0], [10, 0, 10, 12, 8, 10, 0, 0, 0, 0, 0, 1, 0],
+                  [0, 0, 12, 12, 14, 16, 0, 0, 0, 0, 0, 0, 1]])
+    B = np.array([900, 1000, 700, 500, 150, 800, 800])
+    C = np.array([2.1, 2.2, 1.8, 1.2, 1.6, 2.2, 0, 0, 0, 0, 0, 0, 0])
     defaultbase = np.copy(X[len(A[:, 1]) - 1:])
+
     simplex(X, A, B, -C, defaultbase)
